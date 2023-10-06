@@ -1,0 +1,219 @@
+---
+title: "Temples of the Restoration"
+subtitle: "Coding Challenge"
+author: "Paul Cannon"
+execute:
+    warning: false
+    keep-md: true
+    df-print: paged
+format:
+  html:
+    self-contained: true
+    page-layout: full
+    title-block-banner: true
+    toc: true
+    toc-depth: 3
+    toc-location: body
+    number-sections: false
+    html-math-method: katex
+    code-fold: true
+    code-summary: "Show the code"
+    code-overflow: wrap
+    code-copy: hover
+    code-tools:
+        source: false
+        toggle: true
+        caption: See code
+    
+---
+
+# Introduction
+
+The Church of Jesus Christ of Latter-day Saints has always been a temple-building people. Temple worship is central to Latter-day Saint identity and theology. They provide saving ordinances found no place else on earth. For nearly a century, Latter-day Saints outside of the United States would often struggle to save for years to participate in these sacred ordinances.  
+
+In the late 20th century, Gordon B. Hinckley, serving as 15th president of the Church, had a vision to bring temples closer to home for millions of saints in a growing church.  This report explores how temple-building has evolved since the late 19th century, making particular mention of the impact of President Hinckley.
+
+```{python eval = False}
+# Load Libraries
+import requests
+from bs4 import BeautifulSoup
+import pandas as pd
+import numpy as np
+import math
+from scipy.spatial.distance import pdist, squareform
+import json
+import plotly.express as px
+import plotly.graph_objects as go
+from scipy.interpolate import make_interp_spline 
+
+```
+
+```{python}
+###
+## Extract size data  using web scraping
+###
+
+url_size = 'https://churchofjesuschristtemples.org/statistics/dimensions/'
+response_size = requests.get(url_size)
+content_size = BeautifulSoup(response_size.text, "html.parser")
+
+# Extract Column Labels
+label_info = content_size.find_all("a", class_ = "column-sort")
+
+labs = [title.text for title in label_info]
+
+# Extract Table information
+
+data_info = content_size.find_all("td")
+data_list = [title.text for title in data_info]
+size_data = pd.DataFrame(np.reshape(data_list, (276, 6) ), columns=labs)
+
+```
+
+```{python}
+
+### Extract Dedication Data
+url = 'https://churchofjesuschristtemples.org/temples/chronology/'
+response = requests.get(url)
+content = BeautifulSoup(response.text, "html.parser")
+
+nms_info = content.find_all("tr")
+nms = [names.text.strip() for names in nms_info]
+
+data1 = [x for x in nms if "Rededication" not in x ][9:len(nms)]
+
+dedication_data = json.dumps([i.split('\n', 3) for i in data1])
+
+date_data = pd.read_json(dedication_data)
+date_data.columns = ["item", "Temple", "Dedication_Date", "Dedicated_By"]
+
+date_data["Year"] = [string[-4:] if string and len(string) >= 4 else "" for string in date_data.Dedication_Date]
+
+
+```
+
+```{python}
+
+## Merge Dedication Data to size_dist_data
+
+final_data = pd.merge(size_data, date_data, on = "Temple", how = "left")
+final_data.Year = final_data.Year.astype("float")
+
+final_data["SqFt"] = final_data.SquareFootage.replace("-", np.nan).str.replace(",","").astype("float")
+
+final_data["Sealing_Rooms"] = final_data.SealingRooms.replace("-", np.nan).astype("float")
+
+final_data.sort_values(by = "Year", inplace=True)
+
+final_data["Cumulative_Sealing_Rooms"] = final_data.Sealing_Rooms.cumsum()
+
+
+
+```
+
+```{python}
+## Create Distance Matrices for extant temples in a given year
+
+gps_coords = pd.read_csv("https://churchofjesuschristtemples.org/maps/gps/", encoding_errors="ignore")
+
+## Find Euclidean Distances
+temp_data = pd.merge(date_data, gps_coords.filter(["Temple", "Latitude", "Longitude"]), on = "Temple", how = "inner")
+temp_data.Year = temp_data.Year.astype("float")
+
+yr = temp_data.Year[2]
+
+
+def max_dist(df, yr):
+  junk = df.query('Year <= @yr').filter(["Latitude", "Longitude"])
+  dist_matrix = squareform(pdist(junk, metric='euclidean'))
+  mean_distance = dist_matrix.mean()
+  return mean_distance
+
+temp_data["Mean_Distance"] = [max_dist(temp_data,yr) for yr in temp_data.Year]
+
+
+```
+
+
+# How have temple sizes changed over time?
+
+When I was a teenager, I remember President Hinkley proposing a new way to get temples closer to members.  The Church would design smaller temples to be adjacent to stake centers around the world. 
+
+In the October 2021 General Conference, President Nelson announced the Rexburg, North which was planned to be one of the largest temples in the world, I wondered if there was a shift in attitude about temple sizes.  
+
+This chart shows the square footage of all temples and the year dedicated.  You can definitely see the impact on temple sizes during President Hinkley's tenure (from 1995-2008).  
+
+```{python}
+
+size_chart = (px.scatter(
+  final_data.query("SqFt < 300000"),
+  x = "Year",
+  y = "SqFt",
+  color = "SqFt",
+  title = "Square Footage of Temples by Year",
+  trendline="lowess",
+  trendline_options=dict(frac = .3),
+  labels = {
+    "SqFt":"FT^2"
+  }
+  ).update_layout(showlegend = False)
+)
+
+size_chart.add_vrect(x0 = 1995, x1 = 2008, line_width = 0, fillcolor = "red", opacity = .2).add_annotation(x = 2000, y = 175000, text = "President Hinkley")
+
+```
+
+# How has the Max distance between temples changed over time?
+
+Each General Conference, members of the Church of Jesus Christ of Latter-day Saints wait with bated breath for the announcement of new temples.  From Rexburg, North to Ulaanbaatar, we can't help getting excited about sacred temple ordinances becoming more accessible to saints around the world.  
+
+I was curious about the average distance between temples and how things have changed over time.  I decided to look at the average Euclidean distance between existing temples in a given year.  The chart below shows a dramatic increase in distances as temples were dedicated outside the USA.  But we also see a peak and decrease as more and more temples globally near each other.  
+
+This graph also shows a sharp decline during President Hinkley's tenure as President of the Church.
+
+
+```{python}
+
+dist_chart2 = (px.scatter(temp_data,
+  x = "Year", 
+  y = "Mean_Distance", 
+  title = "Mean Euclidean distance from other LDS Temples over time",
+  trendline = "ewm",
+  color = "Mean_Distance",
+  trendline_options = dict(alpha = .9),
+  labels = {
+    "Mean_Distance":"Mean Dist."
+  }
+  )
+)
+
+dist_chart2.add_vrect(x0 = 1995, x1 = 2008, line_width = 0, fillcolor = "red", opacity = .2).add_annotation(x = 2000, y = 25, text = "President Hinkley")
+
+```
+
+# Total Number of Celestial Rooms
+
+Elder George Q. Cannon once said:
+
+“Every foundation stone that is laid for a temple, and every temple completed according to the order the Lord has revealed for His holy priesthood, lessens the power of Satan on the earth, and increases the power of God and Godliness, moves the heavens in mighty power in our behalf, invokes and calls down upon us the blessings of the eternal Gods, and those who reside in their presence.”
+
+This last visualization looks at the total number of sealing rooms dedicated in this last dispensation.
+
+```{python}
+
+celestial_rooms_chart = (px.scatter(final_data,
+  x = "Year", 
+  y = "Cumulative_Sealing_Rooms", 
+  title = "Cumulative sealing rooms over time",
+  trendline = "ewm",
+  color = "Cumulative_Sealing_Rooms",
+  trendline_options = dict(alpha = .9),
+  labels = {
+    "Cumulative_Sealing_Rooms":"Total Sealing Rooms"
+  }
+  )
+)
+
+celestial_rooms_chart.add_vrect(x0 = 1995, x1 = 2008, line_width = 0, fillcolor = "red", opacity = .2).add_annotation(x = 2000, y = 25, text = "President Hinkley")
+
+```
