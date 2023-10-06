@@ -203,7 +203,7 @@ if (outputEl) {{
 :::
 
 
-# How has the Max distance between temples changed over time?
+# How has the average distance between temples changed over time?
 
 Each General Conference, members of the Church of Jesus Christ of Latter-day Saints wait with bated breath for the announcement of new temples.  From Rexburg, North to Ulaanbaatar, we can't help getting excited about sacred temple ordinances becoming more accessible to saints around the world.  
 
