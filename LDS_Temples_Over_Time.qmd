@@ -24,8 +24,7 @@ format:
         source: false
         toggle: true
         caption: See code
-params: 
-    set_title: "reading"
+output-file: "index.html"
 ---
 
 # Introduction
@@ -138,9 +137,9 @@ temp_data["Mean_Distance"] = [max_dist(temp_data,yr) for yr in temp_data.Year]
 
 # How have temple sizes changed over time?
 
-When I was a teenager, I remember President Hinkley proposing a new way to get temples closer to members.  The Church would design smaller temples to be adjacent to stake centers around the world. 
+As a teenager, I remember President Hinkley proposing a new way to get temples closer to members.  The Church would design smaller temples to be adjacent to stake centers around the world. 
 
-In the October 2021 General Conference, President Nelson announced the Rexburg, North which was planned to be one of the largest temples in the world, I wondered if there was a shift in attitude about temple sizes.  
+More recently, in the October 2021 General Conference, President Nelson announced the Rexburg, North which was planned to be one of the largest temples in the world, I wondered if there was a shift in attitude about temple sizes.  
 
 This chart shows the square footage of all temples and the year dedicated.  You can definitely see the impact on temple sizes during President Hinkley's tenure (from 1995-2008).  
 
@@ -168,7 +167,7 @@ size_chart.add_vrect(x0 = 1995, x1 = 2008, line_width = 0, fillcolor = "red", op
 
 Each General Conference, members of the Church of Jesus Christ of Latter-day Saints wait with bated breath for the announcement of new temples.  From Rexburg, North to Ulaanbaatar, we can't help getting excited about sacred temple ordinances becoming more accessible to saints around the world.  
 
-I was curious about the average distance between temples and how things have changed over time.  I decided to look at the average Euclidean distance between existing temples in a given year.  The chart below shows a dramatic increase in distances as temples were dedicated outside the USA.  But we also see a peak and decrease as more and more temples globally near each other.  
+I was curious about the average distance between temples and how things have changed over time.  I decided to look at the average Euclidean distance between existing temples in a given year.  The chart below shows a dramatic increase in distances as temples were dedicated outside the USA.  But we also see a peak and decrease as more and more temples are dedicated nearer each other.  
 
 This graph also shows a sharp decline during President Hinkley's tenure as President of the Church.
 
