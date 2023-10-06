@@ -6,8 +6,11 @@ execute:
     warning: false
     keep-md: true
     df-print: paged
+    enabled: true
 format:
   html:
+    theme: yeti
+    embed-resources: true
     self-contained: true
     page-layout: full
     title-block-banner: true
