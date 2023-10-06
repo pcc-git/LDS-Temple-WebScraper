@@ -29,7 +29,7 @@ output-file: "index.html"
 
 # Introduction
 
-The Church of Jesus Christ of Latter-day Saints has always been a temple-building people. Temple worship is central to Latter-day Saint identity and theology. They provide saving ordinances found no place else on earth. For nearly a century, Latter-day Saints outside of the United States would often struggle to save for years to participate in these sacred ordinances.  
+The Church of Jesus Christ of Latter-day Saints has always been a temple-building organization. Temple worship is central to Latter-day Saint identity and theology. They provide saving ordinances found no place else on earth. For nearly a century, Latter-day Saints outside of the United States would often struggle to save for years to participate in these sacred ordinances.  
 
 In the late 20th century, Gordon B. Hinckley, serving as 15th president of the Church, had a vision to bring temples closer to home for millions of saints in a growing church.  This report explores how temple-building has evolved since the late 19th century, making particular mention of the impact of President Hinckley.
 
