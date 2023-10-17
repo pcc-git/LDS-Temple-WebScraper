@@ -1,0 +1,78 @@
+---
+title: "CE450 - Webscraping Tutorial"
+subtitle: "October 18, 2023"
+author: "Paul Cannon"
+execute:
+    warning: false
+    keep-md: true
+    df-print: paged
+    enabled: true
+format:
+  html:
+    theme: yeti
+    embed-resources: true
+    self-contained: true
+    page-layout: full
+    title-block-banner: true
+    toc: true
+    toc-depth: 3
+    toc-location: body
+    number-sections: false
+    html-math-method: katex
+    code-fold: true
+    code-summary: "Show the code"
+    code-overflow: wrap
+    code-copy: hover
+    code-tools:
+        source: false
+        toggle: true
+        caption: See code
+output-file: "index.html"
+---
+
+
+# Introduction
+
+Webscraping is a great way for Data Scientists to gather data from useful websites.  Today, we're going to learn some of the basics of webscraping using Selenium.  Selenium is not the only way to webscrape, but it's a great place to start.  I also include here some resources to a library called "BeautifulSoup", which is another common way of pulling HTML files into Python.  
+
+## Some Helpful Links:
+
+[Beautiful Soup](https://stackabuse.com/guide-to-parsing-html-with-beautifulsoup-in-python/)
+
+[Finding elements in Selenium](https://www.testim.io/blog/selenium-find-element-by-class/)
+
+[Plotly Express](https://plotly.com/python/)
+
+[PX Trendlines](https://plotly.com/python/linear-fits/)
+
+
+# Getting Started
+
+Keep in mind a few best practices when accessing data from a website. 
+
+## Good Practices
+1. Do no harm
+2. Check a website's "/robots.txt" at the root page
+3. Use public API when available
+4. Keep only relevant data
+5. Just because it's accessible doesn't mean it should be accessed
+6. Don't scrape private data
+7. General Data Protection Regulation (GDPR)
+
+## Load Libraries
+
+```{python load_libraries}
+
+import requests
+from bs4 import BeautifulSoup
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+import pandas as pd
+import numpy as np
+import plotly.express as px
+import plotly.graph_objects as go
+import string
+import re
+from datetime import datetime
+
+```
