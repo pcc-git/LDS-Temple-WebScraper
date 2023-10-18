@@ -181,4 +181,11 @@ new_chart.show()
 
 ```
 
+## President Hinkley's time
 
+```{python}
+### Highlighting the years when president Hinkley was prophet, and adding a text label to the chart
+new_chart.add_vrect(x0 = 1995, x1 = 2008, line_width = 0, fillcolor = "red", opacity = .2).add_annotation(x = 2000, y = 25, text = "President Hinkley").show()
+
+
+```
