@@ -48,6 +48,9 @@ Webscraping is a great way for Data Scientists to gather data from useful websit
 
 [PX Trendlines](https://plotly.com/python/linear-fits/)
 
+[Datetimes](https://www.programiz.com/python-programming/datetime/strptime)
+
+[RegEx](https://docs.python.org/3/library/re.html)
 
 # Getting Started
 
@@ -86,11 +89,13 @@ from datetime import datetime
 
 [Temple Statistics]('https://churchofjesuschristtemples.org/statistics/')
 
+
 ```{python}
 
-url = "https://churchofjesuschristtemples.org/statistics/"
+url = "https://churchofjesuschristtemples.org/statistics/milestones/"
 driver =  webdriver.Chrome()
 driver.get(url)
+
 
 ```
 
@@ -98,19 +103,82 @@ driver.get(url)
 Retrieve element(s) of interest using XPATH.  
 
 What XPATH?
-    * Location within an XML document
+
+  - Location within an XML document
 
 Why XPATH?
-    * Dynamic webscraping
-    * Helps find elements that are not found by other locators (class, name, etc)
+
+  - Dynamic webscraping
+  - Helps find elements that are not found by other locators (class, name, etc)
 
 How XPATH?
 
 1. Try the whole table:
 
 ```{python}
-table_info = driver.find_elements(By.XPATH, '')
+
+table_info = driver.find_elements(By.XPATH, '//*[@id="locationTable"]/tbody/tr/td')
+
+print(len(table_info))
+
+
+list_data = [item.text for item in table_info]
+print(list_data)
+
+
+ncol = 4
+nrow = int(len(list_data) / ncol)
+
 ```
 
+```{python}
+df = (pd.DataFrame(np.reshape(list_data, (nrow, ncol)), columns = ["temple", "announced", "gb", "ded"])
+        # Filter out temples that haven't been dedicated yet
+  .query('ded != " "')
+        # create new columns that are dates formats
+  .assign(
+       ded_date = [datetime.strptime(date, "%d %B %Y") for date in df.ded],
+       announced_date = [datetime.strptime(date, "%d %B %Y") for date in df.announced],
+       ground_breaking_date = [datetime.strptime(date, "%d %B %Y") for date in df.gb],
+
+       # The difference between 2 date variables doesn't return a number, so we need .dt.days to get the number of days
+       n_days = lambda x: (x.ded_date - x.announced_date).dt.days,
+       n_years = lambda x: x.n_days / 365,
+       yr_announced = [datetime.strptime(date, "%d %B %Y") for date in df.gb],
+
+       ## We can extract a year from a date variable like:
+       year = lambda x: x.announced_date.dt.year
+   )
+)
+
+
+```
+
+
+# Plotly Express
+
+A lot of this should look familiar if you've used altair.  Som slight differences, though.  I added a smoother trendline to make a higher level summary for the trends in years between announcement and dedication.  The Lowess smoother requires trendline_options for the parametrization.  There's obviously more customizations, but this should help get you on your way to making graphs in plotly express!
+
+```{python}
+
+new_chart = (px.scatter(
+    df,
+    x = "year",
+    y = "n_years",
+    color="temple",
+    title = "How many years between announcement and dedication?",
+    trendline="lowess",
+    trendline_scope = "overall",
+    trendline_options=dict(frac = .3),
+    trendline_color_override="darkred",
+    labels = {
+      "year":"Year",
+      "n_years":"Number of Years"
+    }
+)).update_layout(showlegend = False)
+
+new_chart.show()
+
+```
 
 
