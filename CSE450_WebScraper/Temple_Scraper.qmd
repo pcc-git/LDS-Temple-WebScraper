@@ -27,7 +27,6 @@ format:
         source: false
         toggle: true
         caption: See code
-output-file: "index.html"
 ---
 
 # Hot off the presses
