@@ -133,23 +133,22 @@ nrow = int(len(list_data) / ncol)
 
 ```{python}
 df = (pd.DataFrame(np.reshape(list_data, (nrow, ncol)), columns = ["temple", "announced", "gb", "ded"])
-        # Filter out temples that haven't been dedicated yet
   .query('ded != " "')
-        # create new columns that are dates formats
   .assign(
-       ded_date = [datetime.strptime(date, "%d %B %Y") for date in df.ded],
-       announced_date = [datetime.strptime(date, "%d %B %Y") for date in df.announced],
-       ground_breaking_date = [datetime.strptime(date, "%d %B %Y") for date in df.gb],
+       ded_date = lambda x: [datetime.strptime(date, "%d %B %Y") for date in x.ded],
+       announced_date = lambda x: [datetime.strptime(date, "%d %B %Y") for date in x.announced],
+       ground_breaking_date = lambda x: [datetime.strptime(date, "%d %B %Y") for date in x.gb],
 
        # The difference between 2 date variables doesn't return a number, so we need .dt.days to get the number of days
        n_days = lambda x: (x.ded_date - x.announced_date).dt.days,
        n_years = lambda x: x.n_days / 365,
-       yr_announced = [datetime.strptime(date, "%d %B %Y") for date in df.gb],
+       yr_announced = lambda x: [datetime.strptime(date, "%d %B %Y") for date in x.gb],
 
        ## We can extract a year from a date variable like:
        year = lambda x: x.announced_date.dt.year
    )
 )
+
 
 
 ```
