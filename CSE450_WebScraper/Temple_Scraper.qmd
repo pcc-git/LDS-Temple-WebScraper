@@ -1,5 +1,5 @@
 ---
-title: "CE450 - Webscraping Tutorial"
+title: "CSE450 - Webscraping Tutorial"
 subtitle: "October 18, 2023"
 author: "Paul Cannon"
 execute:
@@ -29,6 +29,10 @@ format:
         caption: See code
 output-file: "index.html"
 ---
+
+# Hot off the presses
+
+[Thoughts?](https://www.nature.com/articles/d41586-023-03254-5)
 
 
 # Introduction
@@ -76,3 +80,20 @@ import re
 from datetime import datetime
 
 ```
+
+## Establish a Web Driver
+
+- A programming interface to create and execute test cases
+
+[Temple Statistics]('https://churchofjesuschristtemples.org/statistics/')
+
+```{python}
+url = "https://churchofjesuschristtemples.org/statistics/"
+driver =  webdriver.Chrome()
+driver.get(url)
+```
+
+## Find the XPATH you're interested in (table elements, etc.)
+
+Whole table?
+Each Element?
