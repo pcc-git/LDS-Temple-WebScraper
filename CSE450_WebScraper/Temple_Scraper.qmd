@@ -157,7 +157,7 @@ df = (pd.DataFrame(np.reshape(list_data, (nrow, ncol)), columns = ["temple", "an
 
 # Plotly Express
 
-A lot of this should look familiar if you've used altair.  Som slight differences, though.  I added a smoother trendline to make a higher level summary for the trends in years between announcement and dedication.  The Lowess smoother requires trendline_options for the parametrization.  There's obviously more customizations, but this should help get you on your way to making graphs in plotly express!
+A lot of this should look familiar if you've used altair.  Some slight differences, though.  I added a smoother trendline to make a higher level summary for the trends in years between announcement and dedication.  The Lowess smoother requires trendline_options for the parametrization.  There's obviously more customizations, but this should help get you on your way to making graphs in plotly express!
 
 ```{python}
 
