@@ -88,12 +88,30 @@ from datetime import datetime
 [Temple Statistics]('https://churchofjesuschristtemples.org/statistics/')
 
 ```{python}
+
 url = "https://churchofjesuschristtemples.org/statistics/"
 driver =  webdriver.Chrome()
 driver.get(url)
+
 ```
 
 ## Find the XPATH you're interested in (table elements, etc.)
+Retrieve element(s) of interest using XPATH.  
 
-Whole table?
-Each Element?
+What XPATH?
+    * Location within an XML document
+
+Why XPATH?
+    * Dynamic webscraping
+    * Helps find elements that are not found by other locators (class, name, etc)
+
+How XPATH?
+
+1. Try the whole table:
+
+```{python}
+table_info = driver.find_elements(By.XPATH, '')
+```
+
+
+
